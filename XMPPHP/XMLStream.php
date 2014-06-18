@@ -795,8 +795,11 @@ class XMPPHP_XMLStream {
 			$this->log->log("Socket is not ready; break.", XMPPHP_Log::LEVEL_ERROR);
 			return false;
 		}
-		
-		$sentbytes = @fwrite($this->socket, $msg);
+
+    if(!$sentbytes = fwrite($this->socket, $msg)) {
+      $this->doReconnect();
+      return false;
+    }
 		$this->log->log("SENT: " . mb_substr($msg, 0, $sentbytes, '8bit'), XMPPHP_Log::LEVEL_VERBOSE);
 		if($sentbytes === FALSE) {
 			$this->log->log("ERROR sending message; reconnecting.", XMPPHP_Log::LEVEL_ERROR);
